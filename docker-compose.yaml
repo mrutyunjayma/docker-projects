@@ -1,0 +1,42 @@
+services:
+  backend: 
+    build: ./mern/backend
+    ports:
+      - "5050:5050"
+    networks:
+      - node_network
+      - db_network
+    environment:
+      MONGO_URL: mongodb://mongodb:27017/merndatabase
+    depends_on:
+      - mongodb
+  
+
+  frontend:
+    build: ./mern/frontend
+    ports:
+      - "5000:5173"
+    networks:
+      - node_network
+    environment:
+      BACKEND_API_URL: http://backend:5050
+  
+  mongodb:
+    image: mongo:latest
+    ports: 
+      - "27017:27017"
+    networks:
+      - db_network
+    volumes:
+      - mongo-data:/data/db
+
+networks:
+  node_network:
+    driver: bridge
+  
+  db_network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local
